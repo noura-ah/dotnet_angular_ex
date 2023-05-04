@@ -44,6 +44,7 @@ export class LoginComponent {
           this.router.navigate(["dashboard"])
         },
         error: (err) => {
+          console.log(err)
           this.notify.notify('error',err.error.message) 
         }    
       })

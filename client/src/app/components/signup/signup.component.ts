@@ -23,6 +23,7 @@ export class SignupComponent {
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
+      name:[''],
       email: ['', Validators.compose([Validators.required, Validators.email])],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required]
@@ -51,6 +52,7 @@ export class SignupComponent {
     }
 
     else if (this.signupForm.invalid) {
+      // to show errors after clicking on submit btn
       ValidateFrom.validateAllFormFields(this.signupForm)
     }
   }
