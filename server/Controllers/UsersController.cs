@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Cryptography;
 
 namespace ex_1
 {
@@ -36,6 +37,8 @@ namespace ex_1
                 return BadRequest(new{ Message = "Password is incorrect"});
 
             var token = CreateJwt(user);
+            var refreshToken = GenerateRefreshToken();
+            SetRefreshToken(refreshToken,user);
 
             return Ok( new
             {
@@ -62,11 +65,29 @@ namespace ex_1
             });
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<User>> GetAllUsers()
+        [HttpPost("refresh")]
+        public async Task<ActionResult<string>> RefreshToken(string email)
         {
-            return Ok( _db.User.ToList());
+            var refreshToken = Request.Cookies["refreshToken"];
+            
+            if(email == null)
+                return BadRequest();
+            var user =  _db.User.FirstOrDefault(x => x.Email == email );
+
+            if(!user.RefreshToken.Equals(refreshToken))
+            {
+                return Unauthorized("Invalid Refresh Token");
+            }
+            else if (user.TokenExpires < DateTime.Now){
+                return Unauthorized("Token Expired");
+            }
+
+            string token = CreateJwt(user);
+            var newRefreshToken = GenerateRefreshToken();
+            SetRefreshToken(newRefreshToken,user);
+
+            return Ok(token);
+
         }
 
         private bool CheckEmailExist(string email) => _db.User.Any(x => x.Email == email);
@@ -91,6 +112,34 @@ namespace ex_1
 
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
+        }
+
+        private RefreshToken GenerateRefreshToken () 
+        {
+            var refreshToken = new RefreshToken{
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Created = DateTime.Now,
+                Expires = DateTime.Now.AddSeconds(100)
+            };
+
+            return refreshToken;
+        }
+
+        private void SetRefreshToken(RefreshToken newRefreshToken, User user)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = newRefreshToken.Expires
+            };
+
+            Response.Cookies.Append("refreshToken",newRefreshToken.Token, cookieOptions);
+
+            user.RefreshToken = newRefreshToken.Token;
+            user.TokenCreated = newRefreshToken.Created;
+            user.TokenExpires = newRefreshToken.Expires;
+            _db.SaveChanges();
+
         }
     }
 }
