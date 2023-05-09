@@ -15,9 +15,9 @@ const Dashboard = () => {
             try {
                 const res = await axios.get('/Project/', {
                     signal:controller.signal ,
-                    headers: {
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaUBtYWlsLmNvbSIsIm5iZiI6MTY4MzU0OTExMiwiZXhwIjoxNjgzNjM1NTEyLCJpYXQiOjE2ODM1NDkxMTJ9.hUxyC9qtsTnJjerTy2lVTvB4TSeH7Lvq6Jsl_MeanWg'
-                    }
+                    // headers: {
+                    //     Authorization: 'Bearer '
+                    // }
                 })
                 console.log(res.data)
                 setProjects(res.data)
