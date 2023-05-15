@@ -43,6 +43,7 @@ namespace ex_1
             return Ok( new
             {
                 Token = token,
+                Id = user.Id,
                 Message = "Login success" 
             });
         }
@@ -65,24 +66,22 @@ namespace ex_1
             });
         }
 
-        [HttpPost("refresh")]
-        public async Task<ActionResult<string>> RefreshToken(string email)
+        [HttpGet("refresh")]
+        public async Task<ActionResult<string>> RefreshToken(long id)
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            
-            if(email == null)
+            if(id == 0)
                 return BadRequest();
-            var user =  _db.User.FirstOrDefault(x => x.Email == email );
-
+            var user = await _db.User.FindAsync(id);
             if(!user.RefreshToken.Equals(refreshToken))
             {
-                return Unauthorized("Invalid Refresh Token");
+                return Forbid();
             }
             else if (user.TokenExpires < DateTime.Now){
-                return Unauthorized("Token Expired");
+                return Forbid("Token Expired");
             }
 
-            string token = CreateJwt(user);
+            var token = CreateJwt(user);
             var newRefreshToken = GenerateRefreshToken();
             SetRefreshToken(newRefreshToken,user);
 
@@ -106,7 +105,7 @@ namespace ex_1
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddDays(1), 
+                Expires = DateTime.Now.AddSeconds(20), 
                 SigningCredentials = credentials  
             };
 

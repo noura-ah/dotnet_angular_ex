@@ -42,13 +42,13 @@ const LoginrForm = () => {
             return
         }
         try{
-            const res = await axios.post('/Users/login/',{email,password})
+            const res = await axios.post('/Users/login/',{email,password},{withCredentials: true})
             const token = res.data.token
-            setAuth({email,token})
+            const id = res.data.id
+            setAuth({email,token,id})
             navigate(from,{ replace: true})
-            console.log(from, location, token)
         }catch(err){
-            if(!err.response.data)
+            if(!err?.response.data)
                  setErrMsg('No Server Response')
             else if (err.response.data)
                 setErrMsg(err.response.data.message)
