@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { ApiProjectService } from 'src/app/services/api-project.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -12,7 +13,8 @@ export class DashboardComponent {
 
   projects:any = []
   
-  constructor(private auth:AuthService, private apiProject:ApiProjectService,private notify:NotifierService){
+  constructor(private auth:AuthService, private apiProject:ApiProjectService,private notify:NotifierService,
+    private router:Router){
   }
 
   ngOnInit(){
@@ -21,7 +23,15 @@ export class DashboardComponent {
 
   getProjects(){
     this.apiProject.getAllProjects()
-    .subscribe(res => this.projects = res)
+    .subscribe({ 
+      next:(res)=>{this.projects = res},
+      error:(err) => {
+        console.log(err)
+        // if err.status == 403 
+        this.notify.notify('error','Please login again')
+        this.auth.signOut()
+      }
+    })
   }
 
   deleteProject(id: number){
@@ -31,7 +41,12 @@ export class DashboardComponent {
         this.notify.notify('success','Project was deleted successfully')
         this.getProjects()
       },
-      error:(err)=> console.log(err)
+      error:(err)=> {
+        console.log(err)
+        // if err.status == 403 
+        this.notify.notify('error','Please login again')
+        this.auth.signOut()
+      }
     })
   }
 

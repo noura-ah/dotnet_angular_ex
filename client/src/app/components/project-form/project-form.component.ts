@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { ApiProjectService } from 'src/app/services/api-project.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-project-form',
@@ -20,7 +21,8 @@ export class ProjectFormComponent {
     private projectService: ApiProjectService,
     private router: Router,
     private activatedRouter: ActivatedRoute,
-    private notify:NotifierService
+    private notify: NotifierService,
+    private auth: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -33,9 +35,16 @@ export class ProjectFormComponent {
       this.activatedRouter.params.subscribe(val => {
         this.id = val['id']
         this.projectService.getProjectById(this.id)
-          .subscribe(res => {
-            this.isUpdate = true
-            this.fillForm(res)
+          .subscribe({
+            next: res => {
+              this.isUpdate = true
+              this.fillForm(res)
+            },
+            error: err => {
+              // if err.status == 403 
+              this.notify.notify('error', 'Please login again')
+              this.auth.signOut()
+            }
           })
       })
     }
@@ -46,10 +55,15 @@ export class ProjectFormComponent {
       .subscribe({
         next: (res) => {
           this.projectForm.reset()
-          this.notify.notify('success','Project was created successfully')
+          this.notify.notify('success', 'Project was created successfully')
           this.router.navigate(['dashboard'])
         },
-        error: (err) => console.log(err.error)
+        error: (err) => {
+          console.log(err.error)
+          // if err.status == 403 
+          this.notify.notify('error', 'Please login again')
+          this.auth.signOut()
+        }
       })
 
   }
@@ -60,10 +74,15 @@ export class ProjectFormComponent {
       .subscribe({
         next: (res) => {
           this.projectForm.reset()
-          this.notify.notify('success','Project was updated successfully')
+          this.notify.notify('success', 'Project was updated successfully')
           this.router.navigate(['dashboard'])
         },
-        error: (err) => console.log(err.error)
+        error: (err) => {
+          console.log(err.error)
+          // if err.status == 403 
+          this.notify.notify('error', 'Please login again')
+          this.auth.signOut()
+        }
       })
   }
 

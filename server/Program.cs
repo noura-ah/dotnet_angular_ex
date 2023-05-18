@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(option => {
     option.AddPolicy("MyPolicy", builder => {
-        builder.WithOrigins("https://localhost:3000","http://localhost:4200")
+        builder.WithOrigins("https://localhost:3000","https://localhost:4200")
         .AllowAnyMethod()
         .AllowAnyHeader().AllowCredentials();
     });
