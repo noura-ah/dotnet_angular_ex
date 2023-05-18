@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import { setAuthLocal } from '../context/AuthProvider'
 
 const Navbar = () => {
     const { auth, setAuth } = useAuth()
@@ -7,6 +8,7 @@ const Navbar = () => {
 
     const logout = () =>{
         setAuth({})
+        setAuthLocal({})
         navigate('/login')
     }
 

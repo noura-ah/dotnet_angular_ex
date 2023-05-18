@@ -2,10 +2,11 @@ import { axiosPrivate } from "../services/api";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefershToken";
 import useAuth from "./useAuth";
+import { setAuthLocal } from "../context/AuthProvider";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken()
-    const { auth } = useAuth()
+    const { auth, setAuth } = useAuth()
 
     useEffect(() => {
 
@@ -24,12 +25,15 @@ const useAxiosPrivate = () => {
                 if (err?.response?.status === 401 && !prevReq?.sent ) {
                     prevReq.sent = true
                     const newToken = await refresh()
+                    setAuth({token: newToken})
                     prevReq.headers["Authorization"] = `Bearer ${newToken.data}`
                     return axiosPrivate(prevReq)
                 }
                 return Promise.reject(err)
             }
         )
+        
+        setAuthLocal(auth)
         
         return () => {
             axiosPrivate.interceptors.response.eject(responseIntercept)

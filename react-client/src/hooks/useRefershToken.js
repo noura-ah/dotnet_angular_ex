@@ -1,3 +1,4 @@
+import { setAuthLocal } from "../context/AuthProvider";
 import axios from "../services/api";
 import useAuth from "./useAuth";
 
@@ -10,7 +11,6 @@ const useRefreshToken = () => {
         setAuth(prev => {
             return { ...prev, token: response.data }
         })
-
         return response
     }
 
