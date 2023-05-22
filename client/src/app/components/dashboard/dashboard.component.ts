@@ -13,9 +13,7 @@ export class DashboardComponent {
 
   projects:any = []
   
-  constructor(private auth:AuthService, private apiProject:ApiProjectService,private notify:NotifierService,
-    private router:Router){
-  }
+  constructor(private apiProject:ApiProjectService,private notify:NotifierService){}
 
   ngOnInit(){
     this.getProjects()
@@ -29,7 +27,6 @@ export class DashboardComponent {
         console.log(err)
         // if err.status == 403 
         this.notify.notify('error','Please login again')
-        this.auth.signOut()
       }
     })
   }
@@ -45,7 +42,6 @@ export class DashboardComponent {
         console.log(err)
         // if err.status == 403 
         this.notify.notify('error','Please login again')
-        this.auth.signOut()
       }
     })
   }

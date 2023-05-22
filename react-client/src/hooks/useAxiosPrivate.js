@@ -2,7 +2,7 @@ import { axiosPrivate } from "../services/api";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefershToken";
 import useAuth from "./useAuth";
-import { setAuthLocal } from "../context/AuthProvider";
+import { setTokenLocal } from "../context/AuthProvider";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken()
@@ -25,7 +25,7 @@ const useAxiosPrivate = () => {
                 if (err?.response?.status === 401 && !prevReq?.sent ) {
                     prevReq.sent = true
                     const newToken = await refresh()
-                    setAuth({token: newToken})
+                    setAuth({...auth,token: newToken.data})
                     prevReq.headers["Authorization"] = `Bearer ${newToken.data}`
                     return axiosPrivate(prevReq)
                 }
@@ -33,7 +33,8 @@ const useAxiosPrivate = () => {
             }
         )
         
-        setAuthLocal(auth)
+        setTokenLocal(auth.token)
+        
         
         return () => {
             axiosPrivate.interceptors.response.eject(responseIntercept)

@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "../services/api";
-import{ setAuthLocal }  from '../context/AuthProvider'
+import{ setIdLocal, setTokenLocal }  from '../context/AuthProvider'
 import useAuth from "../hooks/useAuth";
 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
@@ -46,7 +46,8 @@ const LoginrForm = () => {
             const token = res.data.token
             const id = res.data.id
             setAuth({email,token,id})
-            setAuthLocal({email,token,id})
+            setIdLocal(id)
+            setTokenLocal(token)
             navigate(from,{ replace: true})
         }catch(err){
             if(!err?.response.data)

@@ -43,7 +43,6 @@ export class ProjectFormComponent {
             error: err => {
               // if err.status == 403 
               this.notify.notify('error', 'Please login again')
-              this.auth.signOut()
             }
           })
       })
@@ -62,14 +61,12 @@ export class ProjectFormComponent {
           console.log(err.error)
           // if err.status == 403 
           this.notify.notify('error', 'Please login again')
-          this.auth.signOut()
         }
       })
 
   }
 
   onUpdate() {
-    console.log(this.projectForm.value)
     this.projectService.updateProject(this.projectForm.value, this.id)
       .subscribe({
         next: (res) => {
@@ -81,7 +78,6 @@ export class ProjectFormComponent {
           console.log(err.error)
           // if err.status == 403 
           this.notify.notify('error', 'Please login again')
-          this.auth.signOut()
         }
       })
   }

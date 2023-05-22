@@ -9,31 +9,50 @@ import { User, UserRegister } from '../models/user';
 export class AuthService {
 
   private baseUrl: string = "https://localhost:7067/api/Users/"
-  constructor(private http : HttpClient, private router:Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
-  signup(user: UserRegister){
-    return this.http.post<any>(`${this.baseUrl}register`,user)
+  signup(user: UserRegister) {
+    return this.http.post<any>(`${this.baseUrl}register`, user)
   }
 
-  login(user: User){
-    return this.http.post<any>(`${this.baseUrl}login`,user)
+  login(user: User) {
+    return this.http.post<any>(`${this.baseUrl}login`, user,
+      {
+        withCredentials: true
+      })
   }
 
-  signOut(){
+  signOut() {
     localStorage.clear()
     this.router.navigate(['login'])
   }
 
-  storeToken(token: string){
-    localStorage.setItem('token',token)
+  storeToken(token: any) {
+    localStorage.setItem('token', token)
   }
 
-  getToken(){
+  storeId(id: any) {
+    localStorage.setItem('id', id)
+  }
+
+  getToken() {
     return localStorage.getItem('token')
   }
 
-  isLoggedIn():boolean{
+  getId() {
+    return localStorage.getItem('id')
+  }
+
+  isLoggedIn(): boolean {
     return !!localStorage.getItem('token')
   }
-  
+
+  generateRefreshToken(id: Number) {
+    return this.http.get(`${this.baseUrl}refresh?id=` + id,
+      {
+        withCredentials: true,
+        responseType: 'text'
+      })
+  }
+
 } 

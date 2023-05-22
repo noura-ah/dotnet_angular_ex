@@ -2,11 +2,9 @@ import { useLocation, useNavigate } from "react-router-dom"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
 import { useEffect, useState, useRef } from "react"
 import useAuth from "../hooks/useAuth"
-import { setAuthLocal } from "../context/AuthProvider"
 
 const Dashboard = () => {
     const [projects, setProjects] = useState()
-    const [errMsg, setErrMsg] = useState()
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
     const location = useLocation()
@@ -27,8 +25,9 @@ const Dashboard = () => {
             }
             catch (err) {
                 setAuth({})
-                setAuthLocal({})
-                navigate('/login', { status: { from: location }, replace: true })
+                localStorage.clear()
+            
+                navigate('/login', { state: { from: location }, replace: true })
             }
         }
 

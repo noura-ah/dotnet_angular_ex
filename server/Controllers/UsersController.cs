@@ -70,8 +70,7 @@ namespace ex_1
         public async Task<ActionResult<string>> RefreshToken(long id)
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            Console.Write(id);
-            Console.Write("---------------------------");
+            
             if(id == 0)
                 return BadRequest();
             var user = await _db.User.FindAsync(id);

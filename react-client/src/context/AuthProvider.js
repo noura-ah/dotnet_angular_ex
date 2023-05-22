@@ -3,11 +3,17 @@ import { createContext, useState } from "react";
 const AuthContext = createContext({})
 
 const getAuth = () => {
-    return JSON.parse(localStorage.getItem('auth')) || ''
+    const token = localStorage.getItem('token')
+    const id =  localStorage.getItem('id')
+    return {token, id}
 }
 
-export const setAuthLocal = (auth) => {
-    localStorage.setItem('auth',JSON.stringify(auth))
+export const setIdLocal = (id) => {
+    localStorage.setItem('id',id)
+}
+
+export const setTokenLocal = (auth) => {
+    localStorage.setItem('token',auth)
 }
 
 

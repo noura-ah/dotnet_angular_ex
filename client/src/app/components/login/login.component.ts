@@ -41,6 +41,7 @@ export class LoginComponent {
           this.notify.notify('success',"successful login")
           this.loginForm.reset()
           this.auth.storeToken(res.token)
+          this.auth.storeId(res.id)
           this.router.navigate(["dashboard"])
         },
         error: (err) => {

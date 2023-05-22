@@ -16,8 +16,7 @@ export class ProjectDetailsComponent {
   constructor(
     private activatedRouter: ActivatedRoute,
     private apiProject: ApiProjectService,
-    private notify: NotifierService,
-    private auth: AuthService) { }
+    private notify: NotifierService) { }
 
   ngOnInit(): void {
     this.activatedRouter.params.subscribe(val => {
@@ -34,7 +33,6 @@ export class ProjectDetailsComponent {
         error: err => {
           //TODO after editing backend: if err.status == 403 
           this.notify.notify('error', 'Please login again')
-          this.auth.signOut()
         }
       })
   }

@@ -11,11 +11,11 @@ export class ApiProjectService {
   constructor(private http : HttpClient) { }
 
   getAllProjects(){
-    return this.http.get<Project[]>(this.baseUrl)
+    return this.http.get<Project[]>(this.baseUrl, {withCredentials:true} )
   }
 
   createProject(project: Project){
-    return this.http.post<any>(`${this.baseUrl}`, project)
+    return this.http.post<any>(`${this.baseUrl}`, project, {withCredentials:true})
   }
 
   updateProject(project: Project, id: number){
@@ -28,6 +28,6 @@ export class ApiProjectService {
   }
 
   getProjectById(id: number){
-    return this.http.get<Project>(`${this.baseUrl}${id}`)
+    return this.http.get<Project>(`${this.baseUrl}${id}`, {withCredentials:true})
   }
 }
