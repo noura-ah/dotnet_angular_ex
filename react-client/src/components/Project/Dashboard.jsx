@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom"
-import useAxiosPrivate from "../hooks/useAxiosPrivate"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import useAxiosPrivate from "../../hooks/useAxiosPrivate"
 import { useEffect, useState, useRef } from "react"
-import useAuth from "../hooks/useAuth"
+import useAuth from "../../hooks/useAuth"
 
 const Dashboard = () => {
     const [projects, setProjects] = useState()
@@ -9,6 +9,7 @@ const Dashboard = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const { setAuth } = useAuth()
+    const [ isDeleted, setIsDeleted ] = useState(false)
 
 
     useEffect(() => {
@@ -26,17 +27,19 @@ const Dashboard = () => {
             catch (err) {
                 setAuth({})
                 localStorage.clear()
-            
                 navigate('/login', { state: { from: location }, replace: true })
             }
         }
 
         getProjects()
+        setIsDeleted(false)
 
-        return () => {
-            controller.abort()
-        }
-    }, [])
+    }, [isDeleted])
+
+    const handleDelete = async (id) =>{
+       const res = await axiosPrivate.delete(`/Project/${id}`)
+       setIsDeleted(true)
+    }
 
     return (
         <div className="px-4 sm:px-6 lg:px-8">
@@ -66,9 +69,9 @@ const Dashboard = () => {
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{p.description}
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                        <a >edit </a>
-                                                        <button >delete </button>
-                                                        <a > details</a>
+                                                        <Link to={`/project/${p.id}/edit`}>edit </Link>
+                                                        <button onClick={() => handleDelete(p.id)}>delete </button>
+                                                        <Link to={`/project/${p.id}`}> details</Link>
                                                     </td>
                                                 </tr>
                                             )
@@ -76,9 +79,9 @@ const Dashboard = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="mt-2 font-semibold text-gray-900 ">
-                            <button routerLink="/project/new"
-                                className="font-bold text-xl py-2 px-4 m-1 shadow bg-indigo-50 ring-1 ring-black ring-opacity-5 rounded-full ">+</button>
+                        <div className="mt-3 font-semibold text-gray-900 ">
+                            <Link to="/project/new"
+                                className="font-bold text-xl py-1 px-2.5 m-1 shadow bg-indigo-50 ring-1 ring-black ring-opacity-5 rounded-full ">+</Link>
                         </div>
                     </div>
                 </div>

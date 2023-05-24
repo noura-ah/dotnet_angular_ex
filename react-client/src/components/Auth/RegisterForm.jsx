@@ -1,25 +1,24 @@
-import { useRef, useState, useEffect, useContext } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "../services/api";
-import{ setIdLocal, setTokenLocal }  from '../context/AuthProvider'
-import useAuth from "../hooks/useAuth";
+import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "../../services/api";
 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
-const LoginrForm = () => {
-    const { setAuth } = useAuth()
+const RegisterForm = () => {
     const userRef = useRef()
     const errRef = useRef()
 
-    const navigate = useNavigate()
-    const location = useLocation()
-    const from = location.state?.from?.pathname || '/'
+    const [name, setName] = useState('')
 
     const [email, setEmail] = useState('')
     const [validEmail, setValidEmail] = useState(false)
 
     const [password, setPassword] = useState('')
 
+    const [matchPassword, setMatchPassword] = useState('')
+    const [validMatch, setValidMatch] = useState(false)
+
     const [errMsg, setErrMsg] = useState('')
+    const [success, setSuccess] = useState(false)
 
     useEffect(() => {
         userRef.current.focus()
@@ -31,8 +30,13 @@ const LoginrForm = () => {
     }, [email])
 
     useEffect(() => {
+        const match = password === matchPassword
+        setValidMatch(match)
+    }, [matchPassword, password])
+
+    useEffect(() => {
         setErrMsg('')
-    }, [email, password])
+    }, [email, password, matchPassword])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -42,20 +46,15 @@ const LoginrForm = () => {
             return
         }
         try{
-            const res = await axios.post('/Users/login/',{email,password},{withCredentials: true})
-            const token = res.data.token
-            const id = res.data.id
-            setAuth({email,token,id})
-            setIdLocal(id)
-            setTokenLocal(token)
-            navigate(from,{ replace: true})
+            const res = await axios.post('/Users/register/',{name,email,password},{withCredentials: true})
+            setSuccess(true)
         }catch(err){
-            if(!err?.response.data)
+            if(!err.response.data)
                  setErrMsg('No Server Response')
             else if (err.response.data)
                 setErrMsg(err.response.data.message)
             else 
-                setErrMsg('Login faild')
+                setErrMsg('Registration faild')
             errRef.current.focus()
         }
 
@@ -63,7 +62,14 @@ const LoginrForm = () => {
 
 
     return (
-        <>
+        <>{success ? (
+            <div>
+                <h1>Success!</h1>
+                <p>
+                    <a href="#">Sign in</a>
+                </p>
+            </div>
+        ) :
             <div className="p-3">
                 {errMsg != '' ?
                     <div ref={errRef} className="text-red-500 bg-red-100 border p-2 border-red-500 rounded" style={errMsg ? { display: 'block' } : { display: 'hidden' }}>{errMsg}</div> : ''}
@@ -78,6 +84,17 @@ const LoginrForm = () => {
                     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                         <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
                             <form className="space-y-6" onSubmit={handleSubmit}>
+                                <div>
+                                    <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
+                                    <div className="mt-2">
+                                        <div
+                                            className="flex flex-wrap items-stretch w-full relative bg-white items-center rounded w-full rounded-md border-0 p-0.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            <input id="name" name="name" type="text" autoComplete="name"
+                                                onChange={(e) => setName(e.target.value)}
+                                                className="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-0 h-10 border-grey-light rounded rounded-l-none px-3 self-center relative outline-none" />
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div>
                                     <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
@@ -117,6 +134,23 @@ const LoginrForm = () => {
 
                                 </div>
 
+                                <div>
+                                    <label htmlFor="confirm_password" className="block text-sm font-medium leading-6 text-gray-900">Confirm Password</label>
+                                    <div className="mt-2">
+                                        <div
+                                            className="flex flex-wrap items-stretch w-full relative bg-white items-center rounded  w-full rounded-md border-0 p-0.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            <input name="confirm-password"
+                                                className="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-0 h-10 border-grey-light rounded rounded-l-none px-3 self-center relative outline-none"
+                                                type="password"
+                                                id="confirm_password"
+                                                onChange={(e) => setMatchPassword(e.target.value)}
+                                                
+                                            />
+                                        </div>
+                                    </div>
+                                    {!validMatch && matchPassword != '' ? <small className="text-red-500">Passwords didn't match</small> : ''}
+                                </div >
+
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
                                         <input id="remember-me" name="remember-me" type="checkbox"
@@ -131,15 +165,15 @@ const LoginrForm = () => {
                                         up</button>
                                 </div >
                             </form >
-                            <div className="font-medium mt-2 text-indigo-600 text-sm"><Link to='/signup'>Sign up</Link></div>
+                            <div className="font-medium mt-2 text-indigo-600 text-sm"><Link to='/'>Login</Link></div>
 
                         </div >
                     </div >
                 </div >
             </div >
-        </>
+        }</>
 
     )
 }
 
-export default LoginrForm
+export default RegisterForm
