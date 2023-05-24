@@ -16,7 +16,6 @@ cd client
 ng serve --ssl
 ```
 
-
 # ToDo list
 - [ ] Role based authorization 
 - [ ] React - alert message component 
