@@ -76,7 +76,6 @@ export class ProjectFormComponent {
         },
         error: (err) => {
           console.log(err.error)
-          // if err.status == 403 
           this.notify.notify('error', 'Please login again')
         }
       })

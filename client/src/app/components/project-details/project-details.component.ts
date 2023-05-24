@@ -31,7 +31,6 @@ export class ProjectDetailsComponent {
           this.project = res
         },
         error: err => {
-          //TODO after editing backend: if err.status == 403 
           this.notify.notify('error', 'Please login again')
         }
       })

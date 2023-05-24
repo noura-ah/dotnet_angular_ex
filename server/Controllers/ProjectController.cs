@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ex_1.Controllers
 {
-    // TODO: return 403 when token expired
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]

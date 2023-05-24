@@ -25,7 +25,6 @@ export class DashboardComponent {
       next:(res)=>{this.projects = res},
       error:(err) => {
         console.log(err)
-        // if err.status == 403 
         this.notify.notify('error','Please login again')
       }
     })

@@ -76,10 +76,10 @@ namespace ex_1
             var user = await _db.User.FindAsync(id);
             if(!user.RefreshToken.Equals(refreshToken))
             {
-                return Forbid();
+                return Unauthorized();
             }
             else if (user.TokenExpires < DateTime.Now){
-                return Forbid("Token Expired");
+                return Unauthorized("Token Expired");
             }
 
             var token = CreateJwt(user);
