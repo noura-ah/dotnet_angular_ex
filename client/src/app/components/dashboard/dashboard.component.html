@@ -23,9 +23,9 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {{project.description}}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <a routerLink="/project/{{project.id}}/edit">edit </a>
+                                        <a [routerLink]="['/project',project.id,'edit']">edit </a>
                                         <button (click)="deleteProject(project.id)">delete </button>
-                                        <a routerLink="/project/{{project.id}}"> details</a>
+                                        <a [routerLink]="['/project',project.id]"> details</a>
                                     </td>
                                 </tr>
                             </ng-container>

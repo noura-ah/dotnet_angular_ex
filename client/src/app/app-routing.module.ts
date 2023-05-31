@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: "login", component: LoginComponent },
   { path: "signup", component: SignupComponent},
   { path: "dashboard", component: DashboardComponent, canActivate:[AuthGuard]},
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' } ,
   { path: "project/new", component: ProjectFormComponent, canActivate:[AuthGuard]},
   { path: "project/:id/edit", component: ProjectFormComponent, canActivate:[AuthGuard]},
   { path: "project/:id", component:ProjectDetailsComponent, canActivate:[AuthGuard]}

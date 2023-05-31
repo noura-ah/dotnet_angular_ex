@@ -11,39 +11,42 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class DashboardComponent {
 
-  projects:any = []
-  
-  constructor(private apiProject:ApiProjectService,private notify:NotifierService){}
+  projects: any = []
 
-  ngOnInit(){
+  constructor(private apiProject: ApiProjectService,
+    private notify: NotifierService) { }
+
+  ngOnInit() {
     this.getProjects()
   }
 
-  getProjects(){
+  getProjects() {
     this.apiProject.getAllProjects()
-    .subscribe({ 
-      next:(res)=>{this.projects = res},
-      error:(err) => {
-        console.log(err)
-        this.notify.notify('error','Please login again')
-      }
-    })
+      .subscribe({
+        next: (res) => { this.projects = res },
+        error: (err) => {
+          console.log(err)
+        }
+      })
   }
 
-  deleteProject(id: number){
-    this.apiProject.deleteProject(id)
-    .subscribe({
-      next:(res)=>{
-        this.notify.notify('success','Project was deleted successfully')
-        this.getProjects()
-      },
-      error:(err)=> {
-        console.log(err)
-        // if err.status == 403 
-        this.notify.notify('error','Please login again')
-      }
-    })
+  deleteProject(id: number) {
+    const confirm_ = confirm("are you sure you want to delete this project?")
+    if (confirm_) {
+      this.apiProject.deleteProject(id)
+        .subscribe({
+          next: (res) => {
+            this.notify.notify('success', 'Project was deleted successfully')
+            this.getProjects()
+          },
+          error: (err) => {
+            console.log(err)
+          }
+        })
+    }
+    
+
   }
 
-  
+
 }

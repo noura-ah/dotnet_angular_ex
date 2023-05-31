@@ -31,7 +31,7 @@ export class ProjectDetailsComponent {
           this.project = res
         },
         error: err => {
-          this.notify.notify('error', 'Please login again')
+          console.log(err) 
         }
       })
   }

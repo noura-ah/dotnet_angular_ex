@@ -7,12 +7,13 @@ import {
 } from '@angular/common/http';
 import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { NotifierService } from 'angular-notifier';
 
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor(private auth: AuthService) { }
+  constructor(private auth: AuthService, private notify:NotifierService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.auth.getToken()
@@ -24,7 +25,8 @@ export class TokenInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       catchError(err => {
-        if (err.status === 401) {
+        const prevReq = err?.config
+        if (err.status === 401  && !prevReq?.sent) {
           return this.handleRefreshToken(request, next) 
         }
         return throwError( err );
@@ -44,6 +46,7 @@ export class TokenInterceptor implements HttpInterceptor {
         return next.handle(request)
       }), catchError(err => {
         this.auth.signOut()
+        this.notify.notify('error', 'Please login again')
         return throwError(err)
       })
     )
