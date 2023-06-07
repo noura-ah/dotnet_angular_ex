@@ -41,7 +41,7 @@ export class ProjectFormComponent {
               this.fillForm(res)
             },
             error: err => {
-              console.log(err.error) 
+              console.log(err) 
             }
           })
       })
@@ -57,7 +57,7 @@ export class ProjectFormComponent {
           this.router.navigate(['dashboard'])
         },
         error: (err) => {
-          console.log(err.error) 
+          console.log(err) 
         }
       })
 
@@ -72,7 +72,7 @@ export class ProjectFormComponent {
           this.router.navigate(['dashboard'])
         },
         error: (err) => {
-          console.log(err.error)
+          console.log(err)
         }
       })
   }

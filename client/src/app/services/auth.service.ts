@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router';
 import { User, UserRegister } from '../models/user';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,8 @@ import { User, UserRegister } from '../models/user';
 export class AuthService {
 
   private baseUrl: string = "https://localhost:7067/api/Users/"
+  user = new Subject<User>()
+
   constructor(private http: HttpClient, private router: Router) { }
 
   signup(user: UserRegister) {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -8,11 +9,11 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class NavbarComponent {
 
-  constructor(private auth: AuthService){
-
+  constructor(private auth: AuthService) {
   }
 
-  logOut(){
+
+  logOut() {
     this.auth.signOut()
   }
 
